@@ -38,6 +38,7 @@ DEFAULT_CONFIG = {
     'gql_department_manage_perms': ['251202'],
     # --- Dashboard / calendar ---
     'gql_dashboard_view_perms': ['251601'],
+    'gql_unified_calendar_view_perms': ['251602'],
     # --- Settings (visibility matrix) ---
     'gql_coordination_admin_perms': ['251901'],
     # --- Seeding ---
@@ -49,7 +50,7 @@ ALL_RIGHTS = [
     251101, 251102, 251103, 251104,
     251110, 251111, 251112,
     251201, 251202,
-    251601,
+    251601, 251602,
     251901,
 ]
 
@@ -69,6 +70,7 @@ class CoordinationConfig(AppConfig):
     gql_department_search_perms = []
     gql_department_manage_perms = []
     gql_dashboard_view_perms = []
+    gql_unified_calendar_view_perms = []
     gql_coordination_admin_perms = []
     # behaviour
     seed_departments = True

@@ -116,7 +116,7 @@ class Query(graphene.ObjectType):
         return gql_optimizer.query(qs.distinct().order_by('start_datetime'), info)
 
     def resolve_coordination_unified_calendar(self, info, date_from, date_to, **kwargs):
-        _check(info.context.user, CoordinationConfig.gql_dashboard_view_perms)
+        _check(info.context.user, CoordinationConfig.gql_unified_calendar_view_perms)
         status = kwargs.get('status')
         department_id = kwargs.get('department_id')
         sources = set(kwargs.get('sources') or ['COORDINATION', 'TRAINING', 'COMMUNICATIONS'])
