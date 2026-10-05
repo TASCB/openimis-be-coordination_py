@@ -43,12 +43,23 @@ def _overlap(qs, date_from, date_to):
     return qs.filter(start_datetime__lt=date_to, end_datetime__gt=date_from)
 
 
+def _location_filter(parent_location):
+    from location.apps import LocationConfig
+    q, key = Q(), "location__uuid"
+    for _i in range(len(LocationConfig.location_types)):
+        q |= Q(**{key: parent_location})
+        key = key.replace("location__", "location__parent__", 1)
+    return q
+
+
 class Query(graphene.ObjectType):
     coordination_activity = OrderedDjangoFilterConnectionField(
         CoordinationActivityGQLType,
         orderBy=graphene.List(of_type=graphene.String),
         client_mutation_id=graphene.String(),
         show_deleted=graphene.Boolean(),
+        parent_location=graphene.String(),
+        parent_location_level=graphene.Int(),
     )
     coordination_department = OrderedDjangoFilterConnectionField(
         CoordinationDepartmentGQLType,
@@ -91,6 +102,8 @@ class Query(graphene.ObjectType):
         if client_mutation_id:
             wait_for_mutation(client_mutation_id)
             filters.append(Q(mutations__mutation__client_mutation_id=client_mutation_id))
+        if kwargs.get('parent_location') is not None:
+            filters.append(_location_filter(kwargs['parent_location']))
         return gql_optimizer.query(CoordinationActivity.objects.filter(*filters).distinct(), info)
 
     def resolve_coordination_department(self, info, **kwargs):
