@@ -107,7 +107,9 @@ class Query(graphene.ObjectType):
         return gql_optimizer.query(CoordinationActivity.objects.filter(*filters).distinct(), info)
 
     def resolve_coordination_department(self, info, **kwargs):
-        _check(info.context.user, CoordinationConfig.gql_department_search_perms)
+        user = info.context.user
+        if not (user.id and user.has_perms(CoordinationConfig.gql_activity_search_perms)):
+            _check(user, CoordinationConfig.gql_department_search_perms)
         filters = [] if kwargs.get('show_deleted') else [Q(is_deleted=False)]
         client_mutation_id = kwargs.get('client_mutation_id')
         if client_mutation_id:
