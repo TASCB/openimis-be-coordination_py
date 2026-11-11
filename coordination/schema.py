@@ -154,8 +154,8 @@ class Query(graphene.ObjectType):
         # --- Training events (optional module: import lazily, degrade gracefully) ---
         if 'TRAINING' in sources and not department_id:
             try:
-                from training.models import Training
-                tqs = _overlap(Training.objects.filter(is_deleted=False), date_from, date_to)
+                from training.services import visible_trainings
+                tqs = _overlap(visible_trainings(info.context.user), date_from, date_to)
                 if status:
                     tqs = tqs.filter(status=status)
                 for t in tqs:
